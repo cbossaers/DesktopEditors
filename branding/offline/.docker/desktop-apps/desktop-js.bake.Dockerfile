@@ -21,7 +21,10 @@ FROM web-base AS desktop-js
     COPY desktop-apps/common app
 
     ### Branding (offline overlay)
-    COPY ${BRANDING_DIR}/desktop-apps/common/ app/
+    ARG BRANDING_DIR="."
+    RUN if [ -d "${BRANDING_DIR}/desktop-apps/common" ]; then \
+            cp -r "${BRANDING_DIR}/desktop-apps/common/"* app/ ; \
+        fi
     ###
 
     ENV COMPANY_NAME=${COMPANY_NAME}

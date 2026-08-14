@@ -6,7 +6,8 @@ DesktopEditors into a fully offline local document editor on Linux.
 The overlay is applied by `.github/workflows/main.yml` **before** the Docker
 bake build. It intentionally does **not** modify any Git submodule contents at
 rest; upstream `core/`, `desktop-apps/` and `web-apps/` remain 1:1 with their
-remote counterparts.
+remote counterparts. Only `core/`, `desktop-apps/` Dockerfiles and source files
+are overlaid at CI time.
 
 ## What is disabled/blanked
 
@@ -29,8 +30,7 @@ branding/offline/
 ├── .docker/
 │   ├── core/core.bake.Dockerfile                    # forwards VCPKG_BINARY_REMOTE
 │   ├── desktop-apps/desktop-apps.bake.Dockerfile    # applies source overlays + appcast env
-│   ├── desktop-apps/desktop-js.bake.Dockerfile      # applies loginpage JS overlay before grunt
-│   └── web-apps/web-apps.bake.Dockerfile              # applies web-apps source overlay before grunt
+│   └── desktop-apps/desktop-js.bake.Dockerfile      # applies loginpage JS overlay before grunt
 ├── desktop-apps/
 │   ├── common/loginpage/src/panelrecent.js          # no external help link
 │   ├── common/loginpage/src/paneltemplates.js       # no online templates
@@ -53,7 +53,6 @@ branding/offline/
    - `core/.docker/core.bake.Dockerfile`
    - `desktop-apps/.docker/desktop-apps.bake.Dockerfile`
    - `desktop-apps/.docker/desktop-js.bake.Dockerfile`
-   - `web-apps/.docker/web-apps.bake.Dockerfile`
 5. Exports `BRANDING_DIR=branding/offline`,
    `VCPKG_BINARY_REMOTE=""`, `DESKTOP_URL_UPDATES_MAIN_CHANNEL=""`,
    `DESKTOP_URL_UPDATES_DEV_CHANNEL=""` and runs `build/linux/build.sh`.

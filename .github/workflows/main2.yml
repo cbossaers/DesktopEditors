@@ -84,7 +84,6 @@ jobs:
           test -f branding/offline/.docker/core/core.bake.Dockerfile
           test -f branding/offline/.docker/desktop-apps/desktop-apps.bake.Dockerfile
           test -f branding/offline/.docker/desktop-apps/desktop-js.bake.Dockerfile
-          test -f branding/offline/.docker/web-apps/web-apps.bake.Dockerfile
           echo "Offline branding overlay is present."
 
       # Apply the offline Docker build patches on top of the upstream submodule
@@ -97,7 +96,6 @@ jobs:
           cp -v branding/offline/.docker/core/core.bake.Dockerfile core/.docker/core.bake.Dockerfile
           cp -v branding/offline/.docker/desktop-apps/desktop-apps.bake.Dockerfile desktop-apps/.docker/desktop-apps.bake.Dockerfile
           cp -v branding/offline/.docker/desktop-apps/desktop-js.bake.Dockerfile desktop-apps/.docker/desktop-js.bake.Dockerfile
-          cp -v branding/offline/.docker/web-apps/web-apps.bake.Dockerfile web-apps/.docker/web-apps.bake.Dockerfile
 
       - name: Build common + desktop app + packages
         working-directory: ./build/linux

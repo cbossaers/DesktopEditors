@@ -32,10 +32,11 @@ FROM web-base AS web-apps
 
     COPY web-apps/ /app
 
-    ### Branding (offline overlay)
-    ARG BRANDING_DIR="."
-    COPY ${BRANDING_DIR}/web-apps/ /app/
-    ###
+    # NOTE: Add a conditional overlay copy here if web-apps source changes are
+    # ever needed for offline hardening. For now all relevant web-app URLs are
+    # already disabled (canAnalytics=false by default), so the overlay is not
+    # required and is omitted to avoid failing when branding/offline/web-apps
+    # does not exist.
 
     ENV PRODUCT_VERSION=${PRODUCT_VERSION}
     ENV BUILD_ROOT=${BUILD_ROOT}

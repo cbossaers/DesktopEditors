@@ -77,8 +77,9 @@ FROM core-base AS desktop-linux
     COPY core-fonts /core-fonts
 
     ### Branding (offline overlay)
-    COPY ${BRANDING_DIR}/desktop-apps /desktop-apps
-    COPY ${BRANDING_DIR}/desktop-sdk /desktop-sdk
+    ARG BRANDING_DIR="."
+    RUN if [ -d "${BRANDING_DIR}/desktop-apps" ]; then cp -r "${BRANDING_DIR}/desktop-apps/." /desktop-apps/ ; fi && \
+        if [ -d "${BRANDING_DIR}/desktop-sdk" ]; then cp -r "${BRANDING_DIR}/desktop-sdk/." /desktop-sdk/ ; fi
     ###
 
     COPY --from=desktop-common /index.html /desktop-apps/common/loginpage/deploy/index.html
