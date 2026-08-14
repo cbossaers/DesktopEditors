@@ -45,6 +45,18 @@ variable "BRANDING_DIR" {
   default = "."
 }
 
+variable "VCPKG_BINARY_REMOTE" {
+  default = ""
+}
+
+variable "DESKTOP_URL_UPDATES_MAIN_CHANNEL" {
+  default = ""
+}
+
+variable "DESKTOP_URL_UPDATES_DEV_CHANNEL" {
+  default = ""
+}
+
 variable "COMPANY_NAME" {
   default = "Euro-Office"
 }
@@ -81,6 +93,9 @@ target "_common" {
     NUGET_CACHE         = "${NUGET_CACHE}"
     CACHE_BUST          = "${CACHE_BUST}"
     BRANDING_DIR        = "${BRANDING_DIR}"
+    VCPKG_BINARY_REMOTE = "${VCPKG_BINARY_REMOTE}"
+    DESKTOP_URL_UPDATES_MAIN_CHANNEL = "${DESKTOP_URL_UPDATES_MAIN_CHANNEL}"
+    DESKTOP_URL_UPDATES_DEV_CHANNEL  = "${DESKTOP_URL_UPDATES_DEV_CHANNEL}"
     PRODUCT_NAME        = "${PRODUCT_NAME}"
     COMPANY_NAME        = "${COMPANY_NAME}"
     COMPANY_NAME_LOW    = "${COMPANY_NAME_LOW}"
