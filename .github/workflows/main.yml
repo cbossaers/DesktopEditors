@@ -1,0 +1,113 @@
+name: Build (Linux)
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: "Git tag to create for this release (for example, v1.2.3)"
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  build-linux:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout with submodules
+        uses: actions/checkout@v7
+        with:
+          submodules: recursive
+          path: .
+
+      # CI-only overlay of the upstream V8 fix from Euro-Office/core.
+      #
+      # We intentionally keep the existing DesktopEditors/core submodule
+      # commits. The overlay copies only the V8 files changed by upstream
+      # commit 5770e14, which:
+      #   - pins depot_tools to f394ab2c993283e94680ca13db98b99927868e98
+      #   - disables depot_tools self-updates during gclient sync
+      #   - refreshes gclient_paths.patch for that depot_tools revision
+      #
+      # This avoids fragile text/regex patching of nc-build.py.
+      - name: Apply upstream V8 fix (CI only)
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          CORE_FIX_COMMIT="5770e14"
+          CORE_RAW_BASE="https://raw.githubusercontent.com/Euro-Office/core/${CORE_FIX_COMMIT}"
+
+          files=(
+            "Common/3dParty/v8/nc-build.py"
+            "Common/3dParty/v8/tools/8.9/x64-linux-dynamic/gclient_paths.patch"
+            "Common/3dParty/v8/tools/8.9/x64-linux-dynamic/nc-build.sh"
+            "Common/3dParty/v8/tools/8.9/arm64-linux-dynamic/gclient_paths.patch"
+            "Common/3dParty/v8/tools/8.9/arm64-linux-dynamic/nc-build.sh"
+          )
+
+          for file in "${files[@]}"; do
+            url="${CORE_RAW_BASE}/${file}"
+            dest="core/${file}"
+
+            echo "Overlaying ${file}"
+            mkdir -p "$(dirname "${dest}")"
+            curl --fail --silent --show-error --location               "${url}"               --output "${dest}"
+          done
+
+          echo
+          echo "Verifying overlay..."
+          grep -n             'f394ab2c993283e94680ca13db98b99927868e98'             core/Common/3dParty/v8/nc-build.py
+          grep -n             'DEPOT_TOOLS_UPDATE.*0'             core/Common/3dParty/v8/nc-build.py
+          grep -n             'f394ab2c993283e94680ca13db98b99927868e98'             core/Common/3dParty/v8/tools/8.9/x64-linux-dynamic/nc-build.sh
+
+          echo
+          echo "V8 upstream overlay ${CORE_FIX_COMMIT} applied successfully."
+
+      # Docker's core-base target copies the workspace's core directory.
+      # Remove the persistent local core-base cache so this run cannot reuse
+      # a pre-overlay core-base image.
+      - name: Remove stale core-base cache
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf /tmp/ghcr.io/euro-office/core-base
+          rm -rf ./.docker-cache/ghcr.io/euro-office/core-base
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v4
+
+      - name: Build common + desktop app + packages
+        working-directory: ./build/linux
+        run: |
+          set -euo pipefail
+          export CACHE_BUST="${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
+          ./build.sh
+        env:
+          BUILDX_BAKE_ENTITLEMENTS_FS: "0"
+
+      - name: Upload Linux packages
+        uses: actions/upload-artifact@v7
+        with:
+          name: linux-packages
+          path: |
+            build/linux/deploy/packages/*.deb
+            build/linux/deploy/packages/*.rpm
+            build/linux/deploy/packages/*.tar.xz
+
+      - name: Create GitHub Release
+        working-directory: ./build/linux
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ inputs.release_tag }}
+        run: |
+          set -euo pipefail
+
+          gh release create "${RELEASE_TAG}" \
+            --title "${RELEASE_TAG}" \
+            --generate-notes \
+            deploy/packages/*.deb \
+            deploy/packages/*.rpm \
+            deploy/packages/*.tar.xz
