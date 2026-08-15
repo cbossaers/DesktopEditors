@@ -88,7 +88,8 @@ jobs:
 
       # Apply the offline Docker build patches on top of the upstream submodule
       # Dockerfiles. This keeps the core, desktop-apps and web-apps submodules
-      # clean while still allowing the CI build to enforce offline behavior.
+      # clean at rest; only core/ and desktop-apps/ Dockerfiles are modified
+      # during the CI run, and they are reset on the next checkout.
       - name: Apply offline Dockerfile overlays
         shell: bash
         run: |

@@ -7,8 +7,9 @@ GenericName[ru]=_GENERICNAME_ru
 Comment=_COMMENT
 Comment[ru]=_COMMENT_ru
 Type=Application
-# Offline build: disable cloud portal creation and blank online help/template URLs.
-Exec=/usr/bin/M4_DESKTOPEDITORS_EXEC --lock-portals --templates-url="" --help-url="" %U
+# Offline build: disable cloud portal creation, blank online help/template URLs,
+# and push update-check interval far into the future.
+Exec=/usr/bin/M4_DESKTOPEDITORS_EXEC --lock-portals --templates-url="" --help-url="" --updates-interval=99999999 %U
 Terminal=false
 Icon=M4_DESKTOPEDITORS_EXEC
 Keywords=Text;Document;OpenDocument Text;Microsoft Word;Microsoft Works;odt;doc;docx;rtf;
@@ -121,7 +122,7 @@ Name[ur]=_NEW_WORD_ur
 Name[vi]=_NEW_WORD_vi
 Name[zh_CN]=_NEW_WORD_zhcn
 Name[zh_TW]=_NEW_WORD_zhtw
-Exec=/usr/bin/M4_DESKTOPEDITORS_EXEC --lock-portals --templates-url="" --help-url="" --new:word
+Exec=/usr/bin/M4_DESKTOPEDITORS_EXEC --lock-portals --templates-url="" --help-url="" --updates-interval=99999999 --new:word
 
 [Desktop Action NewSpreadsheet]
 Name=_NEW_CELL
@@ -166,7 +167,7 @@ Name[ur]=_NEW_CELL_ur
 Name[vi]=_NEW_CELL_vi
 Name[zh_CN]=_NEW_CELL_zhcn
 Name[zh_TW]=_NEW_CELL_zhtw
-Exec=/usr/bin/M4_DESKTOPEDITORS_EXEC --lock-portals --templates-url="" --help-url="" --new:cell
+Exec=/usr/bin/M4_DESKTOPEDITORS_EXEC --lock-portals --templates-url="" --help-url="" --updates-interval=99999999 --new:cell
 
 [Desktop Action NewPresentation]
 Name=_NEW_SLIDE
@@ -211,7 +212,7 @@ Name[ur]=_NEW_SLIDE_ur
 Name[vi]=_NEW_SLIDE_vi
 Name[zh_CN]=_NEW_SLIDE_zhcn
 Name[zh_TW]=_NEW_SLIDE_zhtw
-Exec=/usr/bin/M4_DESKTOPEDITORS_EXEC --lock-portals --templates-url="" --help-url="" --new:slide
+Exec=/usr/bin/M4_DESKTOPEDITORS_EXEC --lock-portals --templates-url="" --help-url="" --updates-interval=99999999 --new:slide
 
 [Desktop Action NewForm]
 Name=_NEW_FORM
@@ -256,4 +257,4 @@ Name[ur]=_NEW_FORM_ur
 Name[vi]=_NEW_FORM_vi
 Name[zh_CN]=_NEW_FORM_zhcn
 Name[zh_TW]=_NEW_FORM_zhtw
-Exec=/usr/bin/M4_DESKTOPEDITORS_EXEC --new:form
+Exec=/usr/bin/M4_DESKTOPEDITORS_EXEC --lock-portals --templates-url="" --help-url="" --updates-interval=99999999 --new:form
